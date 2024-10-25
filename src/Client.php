@@ -46,7 +46,6 @@ class Client
         /** 签名 */
         $handler->push(function (callable $handler) {
             return function (RequestInterface $request, array $options) use ($handler) {
-
                 $params = json_decode($request->getBody()->getContents(), true);
                 $params = (JSON_ERROR_NONE === json_last_error() ? $params : null) ?: [];
 
@@ -56,10 +55,13 @@ class Client
                 $params = array_merge(['signType' => $this->getConfig()->getSignType()], $params);
 
                 $params['sign'] = Openssl::hashContent(
-                    $this->getConfig()->getSignType(), $this->getConfig()->getPrivateKey(), Openssl::makeContent($params)
+                    $this->getConfig()->getSignType(),
+                    $this->getConfig()->getPrivateKey(),
+                    Openssl::makeContent($params)
                 );
 
                 $request = $request->withBody(Utils::streamFor($content = json_encode($params)));
+
                 return $handler($request, $options);
             };
         });

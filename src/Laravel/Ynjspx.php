@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
 /**
  * Class Package.
  *
- * @method static Client client(string $name = null)
+ * @method static Client     client(string $name = null)
  * @method static HttpClient getHttpClient()
  *
  * @see \HughCube\Ynjspx\Laravel\Manager
@@ -31,7 +31,7 @@ class Ynjspx extends IlluminateFacade
      */
     public static function getFacadeAccessor(): string
     {
-        return lcfirst(Str::afterLast(static::class, "\\"));
+        return lcfirst(Str::afterLast(static::class, '\\'));
     }
 
     protected static function registerServiceProvider($app)
@@ -41,6 +41,7 @@ class Ynjspx extends IlluminateFacade
 
     /**
      * Resolve the facade root instance from the container.
+     *
      * @inheritdoc
      */
     protected static function resolveFacadeInstance($name)

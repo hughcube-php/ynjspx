@@ -23,7 +23,7 @@ class TestCase extends OrchestraTestCase
     protected function getPackageProviders($app): array
     {
         return [
-            #PackageServiceProvider::class,
+            //PackageServiceProvider::class,
         ];
     }
 
@@ -36,7 +36,7 @@ class TestCase extends OrchestraTestCase
 
         /** @var Repository $appConfig */
         $appConfig = $app['config'];
-        $appConfig->set(Ynjspx::getFacadeAccessor(), (require dirname(__DIR__) . '/config/config.php'));
+        $appConfig->set(Ynjspx::getFacadeAccessor(), require dirname(__DIR__).'/config/config.php');
     }
 
     /**
@@ -49,10 +49,10 @@ class TestCase extends OrchestraTestCase
 
         $appConfig->set('cache', [
             'default' => 'default',
-            'stores' => [
+            'stores'  => [
                 'default' => [
                     'driver' => 'file',
-                    'path' => sprintf('/tmp/test/%s', md5(serialize([__METHOD__]))),
+                    'path'   => sprintf('/tmp/test/%s', md5(serialize([__METHOD__]))),
                 ],
             ],
         ]);

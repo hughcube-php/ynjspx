@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: hugh.li
  * Date: 2024/10/25
- * Time: 16:22
+ * Time: 16:22.
  */
 
 namespace HughCube\Ynjspx;
@@ -21,6 +21,7 @@ class Openssl
                 $content[] = sprintf('%s=%s', $key, $value);
             }
         }
+
         return implode('&', $content);
     }
 
@@ -30,8 +31,8 @@ class Openssl
     public static function hashContent(string $type, string $privateKey, string $content): string
     {
         /** 私钥 */
-        $privateKey = str_replace(["-----BEGIN PRIVATE KEY-----", "-----END PRIVATE KEY-----", "\n", "\r"], '', $privateKey);
-        $privateKey = "-----BEGIN PRIVATE KEY-----\n" . chunk_split($privateKey, 64, "\n") . "-----END PRIVATE KEY-----\n";
+        $privateKey = str_replace(['-----BEGIN PRIVATE KEY-----', '-----END PRIVATE KEY-----', "\n", "\r"], '', $privateKey);
+        $privateKey = "-----BEGIN PRIVATE KEY-----\n".chunk_split($privateKey, 64, "\n")."-----END PRIVATE KEY-----\n";
         $privateKeyId = openssl_pkey_get_private($privateKey);
         if (!$privateKeyId) {
             throw new InvalidArgumentException('The private key format is incorrect!');
