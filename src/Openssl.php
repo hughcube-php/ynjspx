@@ -31,7 +31,11 @@ class Openssl
     public static function hashContent(string $type, string $privateKey, string $content): string
     {
         /** 私钥 */
-        $privateKey = str_replace(['-----BEGIN PRIVATE KEY-----', '-----END PRIVATE KEY-----', "\n", "\r"], '', $privateKey);
+        $privateKey = str_replace(
+            ['-----BEGIN PRIVATE KEY-----', '-----END PRIVATE KEY-----', "\n", "\r"],
+            '',
+            $privateKey
+        );
         $privateKey = "-----BEGIN PRIVATE KEY-----\n".chunk_split($privateKey, 64, "\n")."-----END PRIVATE KEY-----\n";
         $privateKeyId = openssl_pkey_get_private($privateKey);
         if (!$privateKeyId) {
