@@ -17,7 +17,7 @@ use InvalidArgumentException;
 
 /**
  * @property callable|ContainerContract|null $container
- * @property callable|Repository|null $config
+ * @property callable|Repository|null        $config
  */
 class Manager extends IlluminateManager
 {
@@ -49,21 +49,27 @@ class Manager extends IlluminateManager
 
     /**
      * @param null|string|int $name
-     * @param mixed $default
-     * @return array|mixed
+     * @param mixed           $default
+     *
      * @throws BindingResolutionException
+     *
+     * @return array|mixed
      */
     protected function getPackageConfig($name = null, $default = null)
     {
-        $key = sprintf('%s%s', $this->getPackageFacadeAccessor(), (null === $name ? '' : ".$name"));
+        $key = sprintf('%s%s', $this->getPackageFacadeAccessor(), null === $name ? '' : ".$name");
+
         return $this->getContainerConfig()->get($key, $default);
     }
 
     /**
      * Get the configuration for a client.
+     *
      * @param string $name
-     * @return array
+     *
      * @throws BindingResolutionException
+     *
+     * @return array
      */
     protected function configuration(string $name): array
     {
@@ -83,6 +89,7 @@ class Manager extends IlluminateManager
 
     /**
      * @inheritdoc
+     *
      * @throws BindingResolutionException
      */
     public function getDefaultDriver(): string
@@ -92,6 +99,7 @@ class Manager extends IlluminateManager
 
     /**
      * @inheritdoc
+     *
      * @throws BindingResolutionException
      */
     protected function createDriver($driver)
@@ -100,8 +108,9 @@ class Manager extends IlluminateManager
     }
 
     /**
-     * @return array
      * @throws BindingResolutionException
+     *
+     * @return array
      */
     protected function getDriverDefaultConfig(): array
     {

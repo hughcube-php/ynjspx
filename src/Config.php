@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: hugh.li
  * Date: 2024/10/25
- * Time: 15:50
+ * Time: 15:50.
  */
 
 namespace HughCube\Ynjspx;
@@ -36,16 +36,16 @@ class Config
 
     public function getHttp(): array
     {
-        return array_merge($this->getDefaultHttp(), ($this->config['Http'] ?? []));
+        return array_merge($this->getDefaultHttp(), $this->config['Http'] ?? []);
     }
 
     public function getDefaultHttp(): array
     {
         return [
-            RequestOptions::TIMEOUT => 10.0,
+            RequestOptions::TIMEOUT         => 10.0,
             RequestOptions::CONNECT_TIMEOUT => 1.0,
-            RequestOptions::READ_TIMEOUT => 10.0,
-            RequestOptions::HEADERS => ['User-Agent' => null],
+            RequestOptions::READ_TIMEOUT    => 10.0,
+            RequestOptions::HEADERS         => ['User-Agent' => null],
         ];
     }
 }
