@@ -79,11 +79,11 @@ class Client
 
         if ($this->getConfig()->enableDebug()) {
             $response->isSuccess();
+
             echo sprintf('%s %s', $method, $uri), PHP_EOL;
             echo json_encode($options[RequestOptions::JSON]), PHP_EOL;
-            echo $response->getHttpResponse()->getBody()->getContents(), PHP_EOL;
-            $response->getHttpResponse()->getBody()->rewind();
-            echo PHP_EOL, PHP_EOL;
+            echo $response->getHttpResponse()->getBodyContents(), PHP_EOL;
+            echo PHP_EOL;
         }
 
         return $response;
