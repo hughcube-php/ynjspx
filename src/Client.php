@@ -68,4 +68,11 @@ class Client
 
         return new HttpClient($config);
     }
+
+    public function request(string $method, $uri = '', array $options = []): Response
+    {
+        return new Response(
+            $this->getHttpClient()->requestLazy($method, $uri, $options)
+        );
+    }
 }

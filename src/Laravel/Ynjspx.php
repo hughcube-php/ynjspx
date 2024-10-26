@@ -10,15 +10,19 @@ namespace HughCube\Ynjspx\Laravel;
 
 use HughCube\GuzzleHttp\Client as HttpClient;
 use HughCube\Ynjspx\Client;
+use HughCube\Ynjspx\Response;
 use Illuminate\Support\Facades\Facade as IlluminateFacade;
 use Illuminate\Support\Str;
 
 /**
  * Class Package.
  *
- * @method static Client     client(string $name = null)
- * @method static HttpClient getHttpClient()
+ * @method static Client client(string $name = null)
  *
+ * @method static HttpClient getHttpClient()
+ * @method static Response request(string $method, $uri = '', array $options = [])
+ *
+ * @see \HughCube\Ynjspx\Client
  * @see \HughCube\Ynjspx\Laravel\Manager
  * @see \HughCube\Ynjspx\Laravel\ServiceProvider
  */
