@@ -36,6 +36,11 @@ class Response
         return $this->getHttpResponse()->toArray(false);
     }
 
+    public function getHttpStatusCode(): int
+    {
+        return $this->getHttpResponse()->getStatusCode();
+    }
+
     public function getCode()
     {
         return $this->getBodyArray()['code'] ?? null;
