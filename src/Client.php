@@ -13,6 +13,7 @@ use GuzzleHttp\Psr7\Utils;
 use HughCube\GuzzleHttp\Client as HttpClient;
 use HughCube\GuzzleHttp\HttpClientTrait;
 use Psr\Http\Message\RequestInterface;
+use Throwable;
 
 class Client
 {
@@ -74,5 +75,30 @@ class Client
         return new Response(
             $this->getHttpClient()->requestLazy($method, $uri, $options)
         );
+    }
+
+    /**
+     * @return null|Response
+     * @throws Throwable
+     */
+    public function tryRequest(string $method, $uri = '', array $options = [], $times = 3)
+    {
+        $response = null;
+        for ($i = 1; $i <= $times; $i++) {
+            $response = $exception = null;
+            try {
+                $response = $this->request($method, $uri, $options);
+                if ($response->isSuccess()) {
+                    break;
+                }
+            } catch (Throwable $exception) {
+            }
+        }
+
+        if (isset($exception) && $exception instanceof Throwable) {
+            throw $exception;
+        }
+
+        return $response;
     }
 }
