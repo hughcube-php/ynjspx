@@ -10,6 +10,7 @@ namespace HughCube\Ynjspx;
 
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Utils;
+use GuzzleHttp\RequestOptions;
 use HughCube\GuzzleHttp\Client as HttpClient;
 use HughCube\GuzzleHttp\HttpClientTrait;
 use Psr\Http\Message\RequestInterface;
@@ -72,9 +73,20 @@ class Client
 
     public function request(string $method, $uri = '', array $options = []): Response
     {
-        return new Response(
+        $response = new Response(
             $this->getHttpClient()->requestLazy($method, $uri, $options)
         );
+
+        if ($this->getConfig()->enableDebug()) {
+            $response->isSuccess();
+            echo sprintf('%s %s', $method, $uri), PHP_EOL;
+            echo json_encode($options[RequestOptions::JSON]), PHP_EOL;
+            echo $response->getHttpResponse()->getBody()->getContents(), PHP_EOL;
+            $response->getHttpResponse()->getBody()->rewind();
+            echo PHP_EOL, PHP_EOL;
+        }
+
+        return $response;
     }
 
     /**

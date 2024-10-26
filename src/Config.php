@@ -34,6 +34,11 @@ class Config
         return $this->config['PrivateKey'] ?? null;
     }
 
+    public function enableDebug(): bool
+    {
+        return boolval($this->config['debug'] ?? false);
+    }
+
     public function getHttp(): array
     {
         return array_merge($this->getDefaultHttp(), $this->config['Http'] ?? []);
