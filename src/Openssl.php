@@ -17,7 +17,9 @@ class Openssl
         ksort($params);
         $content = [];
         foreach ($params as $key => $value) {
-            if (!empty($key) && !is_null($value)) {
+            if (is_array($value) && empty($value)) {
+                $content[] = sprintf('%s=%s', $key, '[]');
+            } elseif (!empty($key) && !is_null($value)) {
                 $content[] = sprintf('%s=%s', $key, $value);
             }
         }
@@ -36,7 +38,7 @@ class Openssl
             '',
             $privateKey
         );
-        $privateKey = "-----BEGIN PRIVATE KEY-----\n".chunk_split($privateKey, 64, "\n")."-----END PRIVATE KEY-----\n";
+        $privateKey = "-----BEGIN PRIVATE KEY-----\n" . chunk_split($privateKey, 64, "\n") . "-----END PRIVATE KEY-----\n";
         $privateKeyId = openssl_pkey_get_private($privateKey);
         if (!$privateKeyId) {
             throw new InvalidArgumentException('The private key format is incorrect!');
