@@ -17,10 +17,9 @@ use Illuminate\Support\Str;
 /**
  * Class Package.
  *
- * @method static Client client(string $name = null)
- *
- * @method static HttpClient getHttpClient()
- * @method static Response request(string $method, $uri = '', array $options = [])
+ * @method static Client        client(string $name = null)
+ * @method static HttpClient    getHttpClient()
+ * @method static Response      request(string $method, $uri = '', array $options = [])
  * @method static null|Response tryRequest(string $method, $uri = '', array $options = [], $times = 3)
  *
  * @see \HughCube\Ynjspx\Client

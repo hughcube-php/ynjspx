@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: hugh.li
  * Date: 2024/10/26
- * Time: 11:11
+ * Time: 11:11.
  */
 
 namespace HughCube\Ynjspx;
@@ -70,6 +70,7 @@ class Response
     {
         if (str_starts_with($name, $prefix = 'getData')) {
             $key = substr($name, strrpos($name, $prefix) + strlen($prefix));
+
             return $this->getBodyArray()['data'][lcfirst($key)] ?? null;
         }
 
