@@ -95,14 +95,11 @@ class Client
      */
     public function tryRequest(string $method, $uri = '', array $options = [], $times = 3)
     {
-        $response = null;
         for ($i = 1; $i <= $times; $i++) {
             $response = $exception = null;
             try {
                 $response = $this->request($method, $uri, $options);
-                if ($response->isSuccess()) {
-                    break;
-                }
+                break;
             } catch (Throwable $exception) {
             }
         }
@@ -111,6 +108,6 @@ class Client
             throw $exception;
         }
 
-        return $response;
+        return $response ?? null;
     }
 }
