@@ -17,8 +17,8 @@ class Openssl
         ksort($params);
         $content = [];
         foreach ($params as $key => $value) {
-            if (is_array($value) && empty($value)) {
-                $content[] = sprintf('%s=%s', $key, '[]');
+            if (is_array($value)) {
+                $content[] = sprintf('%s=%s', $key, json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
             } elseif (!empty($key) && !is_null($value)) {
                 $content[] = sprintf('%s=%s', $key, $value);
             }
