@@ -93,8 +93,10 @@ class Client
                 echo PHP_EOL;
             }
 
-            if (!$response->isSuccess()) {
-                throw new ServiceException($response, $response->getMessage(), 0);
+            if (null == $response->getCode()) {
+                throw new ServiceException($response, 'The interface response is incorrect.');
+            } elseif (!$response->isSuccess()) {
+                throw new ServiceException($response, sprintf('%s(%s)', $response->getMessage(), $response->getCode()));
             }
 
             return $response;
@@ -106,9 +108,9 @@ class Client
     }
 
     /**
+     * @return null|Response
      * @throws Throwable
      *
-     * @return null|Response
      */
     public function tryRequest(string $method, $uri = '', array $options = [], $times = 3)
     {
