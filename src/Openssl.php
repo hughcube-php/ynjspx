@@ -42,7 +42,7 @@ class Openssl
             '',
             $privateKey
         );
-        $privateKey = "-----BEGIN PRIVATE KEY-----\n" . chunk_split($privateKey, 64, "\n") . "-----END PRIVATE KEY-----\n";
+        $privateKey = "-----BEGIN PRIVATE KEY-----\n".chunk_split($privateKey, 64, "\n")."-----END PRIVATE KEY-----\n";
         $privateKeyId = openssl_pkey_get_private($privateKey);
         if (!$privateKeyId) {
             throw new InvalidArgumentException('The private key format is incorrect!');
