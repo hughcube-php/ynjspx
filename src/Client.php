@@ -13,6 +13,10 @@ use GuzzleHttp\Psr7\Utils;
 use GuzzleHttp\RequestOptions;
 use HughCube\GuzzleHttp\Client as HttpClient;
 use HughCube\GuzzleHttp\HttpClientTrait;
+use HughCube\Ynjspx\Exceptions\ClientException;
+use HughCube\Ynjspx\Exceptions\Exception;
+use HughCube\Ynjspx\Exceptions\ServiceException;
+use Psr\Http\Client\ClientExceptionInterface as HttpClientException;
 use Psr\Http\Message\RequestInterface;
 use Throwable;
 
@@ -71,38 +75,48 @@ class Client
         return new HttpClient($config);
     }
 
+    /**
+     * @throws Exception
+     */
     public function request(string $method, $uri = '', array $options = []): Response
     {
-        $response = new Response(
-            $this->getHttpClient()->requestLazy($method, $uri, $options)
-        );
+        try {
+            $response = new Response(
+                $this->getHttpClient()->requestLazy($method, $uri, $options)
+            );
 
-        if ($this->getConfig()->enableDebug()) {
-            $response->isSuccess();
+            if ($this->getConfig()->enableDebug()) {
+                $response->isSuccess();
+                echo sprintf('%s %s', $method, $uri), PHP_EOL;
+                echo json_encode($options[RequestOptions::JSON]), PHP_EOL;
+                echo $response->getHttpResponse()->getBodyContents(), PHP_EOL;
+                echo PHP_EOL;
+            }
 
-            echo sprintf('%s %s', $method, $uri), PHP_EOL;
-            echo json_encode($options[RequestOptions::JSON]), PHP_EOL;
-            echo $response->getHttpResponse()->getBodyContents(), PHP_EOL;
-            echo PHP_EOL;
+            if (!$response->isSuccess()) {
+                throw new ServiceException($response, $response->getMessage(), 0);
+            }
+
+            return $response;
+        } catch (HttpClientException $exception) {
+            throw new ClientException($exception->getMessage(), $exception->getCode(), $exception);
+        } catch (Throwable $exception) {
+            throw new Exception($exception->getMessage(), $exception->getCode(), $exception);
         }
-
-        return $response;
     }
 
     /**
-     * @throws Throwable
-     *
      * @return null|Response
+     * @throws Throwable
      */
     public function tryRequest(string $method, $uri = '', array $options = [], $times = 3)
     {
         for ($i = 1; $i <= $times; $i++) {
             $response = $exception = null;
-
             try {
                 $response = $this->request($method, $uri, $options);
                 break;
-            } catch (Throwable $exception) {
+            } catch (ClientException $exception) {
             }
         }
 
