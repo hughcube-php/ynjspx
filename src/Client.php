@@ -84,27 +84,27 @@ class Client
             $response = new Response(
                 $this->getHttpClient()->requestLazy($method, $uri, $options)
             );
-
-            if ($this->getConfig()->enableDebug()) {
-                $response->isSuccess();
-                echo sprintf('%s %s', $method, $uri), PHP_EOL;
-                echo json_encode($options[RequestOptions::JSON]), PHP_EOL;
-                echo $response->getHttpResponse()->getBodyContents(), PHP_EOL;
-                echo PHP_EOL;
-            }
-
-            if (null == $response->getCode()) {
-                throw new ServiceException($response, 'The interface response is incorrect.');
-            } elseif (!$response->isSuccess()) {
-                throw new ServiceException($response, sprintf('%s(%s)', $response->getMessage(), $response->getCode()));
-            }
-
-            return $response;
         } catch (HttpClientException $exception) {
             throw new ClientException($exception->getMessage(), $exception->getCode(), $exception);
         } catch (Throwable $exception) {
             throw new Exception($exception->getMessage(), $exception->getCode(), $exception);
         }
+
+        if ($this->getConfig()->enableDebug()) {
+            $response->isSuccess();
+            echo sprintf('%s %s', $method, $uri), PHP_EOL;
+            echo json_encode($options[RequestOptions::JSON]), PHP_EOL;
+            echo $response->getHttpResponse()->getBodyContents(), PHP_EOL;
+            echo PHP_EOL;
+        }
+
+        if (null == $response->getCode()) {
+            throw new ServiceException($response, 'The interface response is incorrect.');
+        } elseif (!$response->isSuccess()) {
+            throw new ServiceException($response, sprintf('%s(%s)', $response->getMessage(), $response->getCode()));
+        }
+
+        return $response;
     }
 
     /**
