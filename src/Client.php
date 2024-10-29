@@ -106,13 +106,15 @@ class Client
     }
 
     /**
-     * @return null|Response
      * @throws Throwable
+     *
+     * @return null|Response
      */
     public function tryRequest(string $method, $uri = '', array $options = [], $times = 3)
     {
         for ($i = 1; $i <= $times; $i++) {
             $response = $exception = null;
+
             try {
                 $response = $this->request($method, $uri, $options);
                 break;
