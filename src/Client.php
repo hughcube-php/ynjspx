@@ -13,7 +13,6 @@ use GuzzleHttp\Promise\Promise;
 use GuzzleHttp\Psr7\Utils;
 use HughCube\GuzzleHttp\Client as HttpClient;
 use HughCube\GuzzleHttp\HttpClientTrait;
-use HughCube\Ynjspx\Exceptions\ClientException;
 use HughCube\Ynjspx\Exceptions\Exception;
 use HughCube\Ynjspx\Exceptions\ServiceException;
 use Psr\Http\Client\ClientExceptionInterface as HttpClientException;
@@ -117,15 +116,9 @@ class Client
      */
     public function request(string $method, $uri = '', array $options = []): Response
     {
-        try {
-            $response = new Response(
-                $this->getHttpClient()->requestLazy($method, $uri, $options)
-            );
-        } catch (HttpClientException $exception) {
-            throw new ClientException($exception->getMessage(), $exception->getCode(), $exception);
-        } catch (Throwable $exception) {
-            throw new Exception($exception->getMessage(), $exception->getCode(), $exception);
-        }
+        $response = new Response(
+            $this->getHttpClient()->requestLazy($method, $uri, $options)
+        );
 
         if (null == $response->getCode()) {
             throw new ServiceException($response, 'The interface response is incorrect.');
@@ -149,7 +142,7 @@ class Client
             try {
                 $response = $this->request($method, $uri, $options);
                 break;
-            } catch (ClientException $exception) {
+            } catch (HttpClientException $exception) {
             }
         }
 
