@@ -39,6 +39,11 @@ class Client
         $this->config = new Config($config);
     }
 
+    public function getVersion(): string
+    {
+        return 'v1.0.22';
+    }
+
     public function getConfig(): Config
     {
         return $this->config;
@@ -48,6 +53,17 @@ class Client
     {
         $config = $this->getConfig()->getHttp();
         $config['handler'] = $handler = HandlerStack::create();
+
+        /** User-Agent */
+        $handler->push(function (callable $handler) {
+            return function (RequestInterface $request, array $options) use ($handler) {
+                $userAgent = $request->getHeader('User-Agent');
+                if (empty($userAgent) || (is_array($userAgent) && empty(array_filter($userAgent)))) {
+                    $request = $request->withHeader('User-Agent', sprintf('Yn/%s', $this->getVersion()));
+                }
+                return $handler($request, $options);
+            };
+        });
 
         /** 签名 */
         $handler->push(function (callable $handler) {
