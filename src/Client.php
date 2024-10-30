@@ -9,8 +9,8 @@
 namespace HughCube\Ynjspx;
 
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Promise\Promise;
 use GuzzleHttp\Psr7\Utils;
-use GuzzleHttp\RequestOptions;
 use HughCube\GuzzleHttp\Client as HttpClient;
 use HughCube\GuzzleHttp\HttpClientTrait;
 use HughCube\Ynjspx\Exceptions\ClientException;
@@ -18,6 +18,7 @@ use HughCube\Ynjspx\Exceptions\Exception;
 use HughCube\Ynjspx\Exceptions\ServiceException;
 use Psr\Http\Client\ClientExceptionInterface as HttpClientException;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
 class Client
@@ -66,9 +67,45 @@ class Client
                     Openssl::makeContent($params)
                 );
 
-                $request = $request->withBody(Utils::streamFor($content = json_encode($params)));
+                $request = $request->withBody(Utils::streamFor(json_encode($params)));
 
                 return $handler($request, $options);
+            };
+        });
+
+        /** 输出请求debug信息 */
+        $handler->push(function (callable $handler) {
+            return function (RequestInterface $request, array $options) use ($handler) {
+
+                /** @var Promise $promise */
+                $promise = $handler($request, $options);
+
+                return $promise->then(function (ResponseInterface $response) use ($request, $options) {
+                    if ($this->getConfig()->enableDebug() || true === boolval($options['debug'] ?? false)) {
+                        echo sprintf('> %s %s', $request->getMethod(), strval($request->getUri())), PHP_EOL;
+                        foreach ($request->getHeaders() as $name => $values) {
+                            foreach ($values as $value) {
+                                echo sprintf('> %s: %s', $name, $value), PHP_EOL;
+                            }
+                        }
+                        $request->getBody()->rewind();
+                        echo sprintf('> %s', $request->getBody()->getContents()), PHP_EOL;
+
+                        echo PHP_EOL;
+
+                        echo sprintf('< %s %s', $response->getStatusCode(), $response->getReasonPhrase()), PHP_EOL;
+                        foreach ($response->getHeaders() as $name => $values) {
+                            foreach ($values as $value) {
+                                echo sprintf('< %s: %s', $name, $value), PHP_EOL;
+                            }
+                        }
+                        echo sprintf('< %s', $response->getBody()->getContents()), PHP_EOL;
+                        $response->getBody()->rewind();
+                        echo PHP_EOL, PHP_EOL;
+                    }
+
+                    return $response;
+                });
             };
         });
 
@@ -88,14 +125,6 @@ class Client
             throw new ClientException($exception->getMessage(), $exception->getCode(), $exception);
         } catch (Throwable $exception) {
             throw new Exception($exception->getMessage(), $exception->getCode(), $exception);
-        }
-
-        if ($this->getConfig()->enableDebug()) {
-            $response->isSuccess();
-            echo sprintf('%s %s', $method, $uri), PHP_EOL;
-            echo json_encode($options[RequestOptions::JSON]), PHP_EOL;
-            echo $response->getHttpResponse()->getBodyContents(), PHP_EOL;
-            echo PHP_EOL;
         }
 
         if (null == $response->getCode()) {
