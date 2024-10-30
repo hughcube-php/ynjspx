@@ -81,7 +81,7 @@ class Client
                 $promise = $handler($request, $options);
 
                 return $promise->then(function (ResponseInterface $response) use ($request, $options) {
-                    if ($this->getConfig()->enableDebug() || true === boolval($options['debug'] ?? false)) {
+                    if ($this->getConfig()->enableDebug() || true === boolval($options['extra']['debug'] ?? false)) {
                         echo sprintf('> %s %s', $request->getMethod(), strval($request->getUri())), PHP_EOL;
                         foreach ($request->getHeaders() as $name => $values) {
                             foreach ($values as $value) {
