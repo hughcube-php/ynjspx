@@ -41,7 +41,7 @@ class Client
 
     public function getVersion(): string
     {
-        return 'v1.0.22';
+        return '1.0.23';
     }
 
     public function getConfig(): Config
@@ -57,10 +57,7 @@ class Client
         /** User-Agent */
         $handler->push(function (callable $handler) {
             return function (RequestInterface $request, array $options) use ($handler) {
-                $userAgent = $request->getHeader('User-Agent');
-                if (empty($userAgent) || (is_array($userAgent) && empty(array_filter($userAgent)))) {
-                    $request = $request->withHeader('User-Agent', sprintf('Yn/%s', $this->getVersion()));
-                }
+                $request = $request->withHeader('User-Agent', sprintf('Yn/%s', $this->getVersion()));
                 return $handler($request, $options);
             };
         });
@@ -103,8 +100,21 @@ class Client
                                 echo sprintf('> %s: %s', $name, $value), PHP_EOL;
                             }
                         }
+
+                        echo '>', PHP_EOL;
                         $request->getBody()->rewind();
-                        echo sprintf('> %s', $request->getBody()->getContents()), PHP_EOL;
+                        $data = mb_substr($request->getBody()->read(min(1000, $request->getBody()->getSize())), 0, 100);
+                        if ($request->getBody()->getSize() > 10 * 1024) {
+                            echo sprintf('* Failure writing output to destination, returned %s.', $request->getBody()->getSize()), PHP_EOL;
+                        } elseif (!mb_check_encoding($data, 'UTF-8') || 0 < preg_match('/[^\x09\x0A\x0D\x20-\x7E]/', $data)) {
+                            echo '* Binary output can mess up your terminal.', PHP_EOL;
+                        } elseif (empty($data)) {
+                            echo '* Request completely sent off', PHP_EOL;
+                        } else {
+                            $request->getBody()->rewind();
+                            echo sprintf('> %s', $request->getBody()->getContents()), PHP_EOL;
+                            echo '* Request completely sent off', PHP_EOL;
+                        }
 
                         echo PHP_EOL;
 
@@ -114,7 +124,18 @@ class Client
                                 echo sprintf('< %s: %s', $name, $value), PHP_EOL;
                             }
                         }
-                        echo sprintf('< %s', $response->getBody()->getContents()), PHP_EOL;
+                        echo '<', PHP_EOL;
+
+                        $data = mb_substr($response->getBody()->read(min(1000, $response->getBody()->getSize())), 0, 100);
+                        if ($response->getBody()->getSize() > 10 * 1024) {
+                            echo sprintf('* Failure writing output to destination, returned %s.', $response->getBody()->getSize()), PHP_EOL;
+                        } elseif (!mb_check_encoding($data, 'UTF-8') || 0 < preg_match('/[^\x09\x0A\x0D\x20-\x7E]/', $data)) {
+                            echo '* Binary output can mess up your terminal.', PHP_EOL;
+                        } else {
+                            $response->getBody()->rewind();
+                            echo sprintf('< %s', $response->getBody()->getContents()), PHP_EOL;
+                            echo sprintf('* Connection #0 to host %s left intact', $request->getHeaderLine('Host')), PHP_EOL;
+                        }
                         $response->getBody()->rewind();
                         echo PHP_EOL, PHP_EOL;
                     }
