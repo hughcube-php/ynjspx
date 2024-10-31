@@ -58,6 +58,7 @@ class Client
         $handler->push(function (callable $handler) {
             return function (RequestInterface $request, array $options) use ($handler) {
                 $request = $request->withHeader('User-Agent', sprintf('Yn/%s', $this->getVersion()));
+
                 return $handler($request, $options);
             };
         });
@@ -88,7 +89,6 @@ class Client
         /** 输出请求debug信息 */
         $handler->push(function (callable $handler) {
             return function (RequestInterface $request, array $options) use ($handler) {
-
                 /** @var Promise $promise */
                 $promise = $handler($request, $options);
 
@@ -167,9 +167,9 @@ class Client
     }
 
     /**
-     * @return null|Response
      * @throws Throwable
      *
+     * @return null|Response
      */
     public function tryRequest(string $method, $uri = '', array $options = [], $times = 3)
     {

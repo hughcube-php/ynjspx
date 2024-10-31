@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: hugh.li
  * Date: 2024/10/29
- * Time: 16:24
+ * Time: 16:24.
  */
 
 namespace HughCube\Ynjspx\Exceptions;
@@ -14,7 +14,7 @@ class ServiceException extends Exception
 {
     protected $response;
 
-    public function __construct(Response $response, $message = "", $code = 0, $previous = null)
+    public function __construct(Response $response, $message = '', $code = 0, $previous = null)
     {
         $this->response = $response;
 
