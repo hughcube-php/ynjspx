@@ -41,7 +41,7 @@ class Client
 
     public function getVersion(): string
     {
-        return '1.0.23';
+        return '1.0.24';
     }
 
     public function getConfig(): Config
@@ -106,10 +106,10 @@ class Client
                         $data = mb_substr($request->getBody()->read(min(1000, $request->getBody()->getSize())), 0, 100);
                         if ($request->getBody()->getSize() > 10 * 1024) {
                             echo sprintf('* Failure writing output to destination, returned %s.', $request->getBody()->getSize()), PHP_EOL;
-                        } elseif (!mb_check_encoding($data, 'UTF-8') || 0 < preg_match('/[^\x09\x0A\x0D\x20-\x7E]/', $data)) {
+                        } elseif (!mb_check_encoding($data, 'UTF-8')) {
                             echo '* Binary output can mess up your terminal.', PHP_EOL;
                         } elseif (empty($data)) {
-                            echo '* Request completely sent off', PHP_EOL;
+                            echo PHP_EOL, '* Request completely sent off', PHP_EOL;
                         } else {
                             $request->getBody()->rewind();
                             echo sprintf('> %s', $request->getBody()->getContents()), PHP_EOL;
@@ -167,9 +167,9 @@ class Client
     }
 
     /**
+     * @return null|Response
      * @throws Throwable
      *
-     * @return null|Response
      */
     public function tryRequest(string $method, $uri = '', array $options = [], $times = 3)
     {
