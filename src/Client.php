@@ -167,9 +167,9 @@ class Client
     }
 
     /**
-     * @return null|Response
      * @throws Throwable
      *
+     * @return null|Response
      */
     public function tryRequest(string $method, $uri = '', array $options = [], $times = 3)
     {
