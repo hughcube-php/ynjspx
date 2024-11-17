@@ -41,7 +41,7 @@ class Client
 
     public function getVersion(): string
     {
-        return '1.0.24';
+        return '1.0.25';
     }
 
     public function getConfig(): Config
@@ -129,7 +129,7 @@ class Client
                         $data = mb_substr($response->getBody()->read(min(1000, $response->getBody()->getSize())), 0, 100);
                         if ($response->getBody()->getSize() > 10 * 1024) {
                             echo sprintf('* Failure writing output to destination, returned %s.', $response->getBody()->getSize()), PHP_EOL;
-                        } elseif (!mb_check_encoding($data, 'UTF-8') || 0 < preg_match('/[^\x09\x0A\x0D\x20-\x7E]/', $data)) {
+                        } elseif (!mb_check_encoding($data, 'UTF-8')) {
                             echo '* Binary output can mess up your terminal.', PHP_EOL;
                         } else {
                             $response->getBody()->rewind();
