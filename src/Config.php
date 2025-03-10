@@ -29,6 +29,11 @@ class Config
         return $this->config['AppId'] ?? null;
     }
 
+    public function getSdkAppId()
+    {
+        return ($this->config['SdkAppId'] ?? null) ?: $this->getAppId();
+    }
+
     public function getPrivateKey()
     {
         return $this->config['PrivateKey'] ?? null;
