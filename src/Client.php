@@ -13,6 +13,7 @@ use GuzzleHttp\Promise\Promise;
 use GuzzleHttp\Psr7\Utils;
 use HughCube\GuzzleHttp\Client as HttpClient;
 use HughCube\GuzzleHttp\HttpClientTrait;
+use HughCube\PUrl\HUrl;
 use HughCube\Ynjspx\Exceptions\Exception;
 use HughCube\Ynjspx\Exceptions\ServiceException;
 use Psr\Http\Client\ClientExceptionInterface as HttpClientException;
@@ -175,7 +176,6 @@ class Client
     {
         for ($i = 1; $i <= $times; $i++) {
             $response = $exception = null;
-
             try {
                 $response = $this->request($method, $uri, $options);
                 break;
@@ -188,5 +188,14 @@ class Client
         }
 
         return $response ?? null;
+    }
+
+    public function makeOssUrl($redirect): string
+    {
+        $url = HUrl::instance($this->getConfig()->getSsoUrl());
+
+        return $url->withQueryValue('redirect', $redirect)
+            ->withQueryValue('client', $this->getConfig()->getAppId())
+            ->toString();
     }
 }

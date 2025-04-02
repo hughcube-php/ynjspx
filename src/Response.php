@@ -68,7 +68,7 @@ class Response
 
     public function __call($name, $arguments = [])
     {
-        if (str_starts_with($name, $prefix = 'getData')) {
+        if (substr($name, 0, strlen($prefix = 'getData'))) {
             $key = substr($name, strrpos($name, $prefix) + strlen($prefix));
 
             return $this->getBodyArray()['data'][lcfirst($key)] ?? null;

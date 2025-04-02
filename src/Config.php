@@ -44,6 +44,11 @@ class Config
         return boolval($this->config['debug'] ?? false);
     }
 
+    public function getSsoUrl()
+    {
+        return $this->config['SsoUrl'] ?? null;
+    }
+
     public function getHttp(): array
     {
         return array_merge($this->getDefaultHttp(), $this->config['Http'] ?? []);
