@@ -19,6 +19,11 @@ class Config
         $this->config = $config;
     }
 
+    public function get($key, $default = null)
+    {
+        return $this->config[$key] ?? $default;
+    }
+
     public function getSignType()
     {
         return $this->config['SignType'] ?? null ?: 'RSA2';
