@@ -12,6 +12,7 @@ use HughCube\Ynjspx\Client;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\Container as ContainerContract;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Manager as IlluminateManager;
 use InvalidArgumentException;
 
@@ -124,6 +125,10 @@ class Manager extends IlluminateManager
 
     protected function makeDriver(array $config): Client
     {
+        if (isset($config['logger']) && is_string($config['logger'])) {
+            $config['logger'] = Log::channel($config['logger']);
+        }
+
         return new Client($config);
     }
 }

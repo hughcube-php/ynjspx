@@ -9,6 +9,7 @@
 namespace HughCube\Ynjspx;
 
 use GuzzleHttp\RequestOptions;
+use Psr\Log\LoggerInterface;
 
 class Config
 {
@@ -57,6 +58,11 @@ class Config
     public function getHttp(): array
     {
         return array_merge($this->getDefaultHttp(), $this->config['Http'] ?? []);
+    }
+
+    public function getLogger(): ?LoggerInterface
+    {
+        return $this->config['logger'] ?? null;
     }
 
     public function getDefaultHttp(): array

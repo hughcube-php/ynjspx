@@ -19,6 +19,7 @@ use HughCube\Ynjspx\Exceptions\ServiceException;
 use Psr\Http\Client\ClientExceptionInterface as HttpClientException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 use Throwable;
 
 class Client
@@ -139,6 +140,32 @@ class Client
                         }
                         $response->getBody()->rewind();
                         echo PHP_EOL, PHP_EOL;
+                    }
+
+                    return $response;
+                });
+            };
+        });
+
+        /** 记录log */
+        $handler->push(function (callable $handler) {
+            return function (RequestInterface $request, array $options) use ($handler) {
+                /** @var Promise $promise */
+                $promise = $handler($request, $options);
+
+                return $promise->then(function (ResponseInterface $response) use ($request, $options) {
+
+                    $logger = $this->getConfig()->getLogger();
+                    if ($logger instanceof LoggerInterface && true === boolval($options['extra']['log'] ?? true)) {
+                        $logger->info(sprintf(
+                            '%s %s RequestHeaders: %s, RequestBody: %s, ResponseHeaders: %s, ResponseBody: %s',
+                            $request->getMethod(), $request->getUri(),
+                            json_encode($request->getHeaders()), $request->getBody()->getContents(),
+                            json_encode($response->getHeaders()), $response->getBody()->getContents()
+                        ));
+
+                        $request->getBody()->rewind();
+                        $response->getBody()->rewind();
                     }
 
                     return $response;
