@@ -157,6 +157,9 @@ class Client
 
                     $logger = $this->getConfig()->getLogger();
                     if ($logger instanceof LoggerInterface && true === boolval($options['extra']['log'] ?? true)) {
+                        $request->getBody()->rewind();
+                        $response->getBody()->rewind();
+
                         $logger->info(sprintf(
                             '%s %s RequestHeaders: %s, RequestBody: %s, ResponseHeaders: %s, ResponseBody: %s',
                             $request->getMethod(), $request->getUri(),
